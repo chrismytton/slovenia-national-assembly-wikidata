@@ -18,13 +18,16 @@ def wikinames_from(url)
 end
 
 def fetch_info(names)
-  WikiData.ids_from_pages('sl', names).each do |name, id|
-    data = WikiData::Fetcher.new(id: id).data('sl') rescue nil
-    unless data
-      warn "No data for #{name} #{id}"
-      next
-    end
-    data[:original_wikiname] = name
+  ids_from_names = WikiData.ids_from_pages('sl', names).values
+  categories = ['Kategorija:Poslanci_7._državnega_zbora_Republike_Slovenije']
+  ids_from_categories = categories.map { |c| WikiData::Category.new(c, 'sl').wikidata_ids }
+  ids = ids_from_categories.flatten.uniq | ids_from_names.flatten.uniq
+
+  ids.each do |id|
+    data = WikiData::Fetcher.new(id: id).data('sl')
+    next if data.nil?
+    warn "#{data[:id]} #{data[:name]}"
+    data[:original_wikiname] = data[:name]
     ScraperWiki.save_sqlite([:id], data)
   end
 end
