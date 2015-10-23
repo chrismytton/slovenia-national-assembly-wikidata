@@ -1,7 +1,7 @@
 require 'scraperwiki'
 require 'wikidata/fetcher'
 
-pages = ['Kategorija:Poslanci_6._državnega_zbora_Republike_Slovenije']
+pages = ['Kategorija:Poslanci_7._državnega_zbora_Republike_Slovenije']
 
 pages = pages.map { |c| WikiData::Category.new(c, 'sl').wikidata_ids }
 
